@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Распознавание Карточек RUSMARC</title>
+    <!-- Используем CSS из предыдущего примера (внутренний или внешний) -->
+    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}"> 
+    <style>
+        /* Дополнительные стили для контейнера изображения */
+        #imagePreviewContainer {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-align: center; /* Центрируем изображение */
+            min-height: 100px; /* Минимальная высота, чтобы контейнер был виден */
+            border: 1px dashed #ccc; /* Пунктирная рамка */
+            padding: 10px;
+            display: none; /* Скрыт по умолчанию */
+            background-color: #f9f9f9;
+        }
+        #imagePreview {
+            max-width: 100%; /* Изображение не будет вылезать за контейнер */
+            max-height: 400px; /* Ограничим высоту превью */
+            display: block; /* Убираем лишние отступы снизу */
+            margin: 0 auto; /* Центрируем */
+        }
+    </style>
+</head>
+<body>
+    <h1>Загрузите изображение каталожной карточки</h1>
+    
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form id="uploadForm" method="post" action="/predict/" enctype="multipart/form-data">
+        <p>
+            <!-- Добавляем id к input и событие onchange -->
+            <input type="file" id="card_image_input" name="card_image" accept="image/*" required onchange="previewImage(event)">
+        </p>
+        
+        <!-- Контейнер для предпросмотра изображения -->
+        <div id="imagePreviewContainer">
+            <img id="imagePreview" src="#" alt="Предпросмотр изображения"/>
+        </div>
+
+        <p class="center-p">
+             <!-- Добавляем id к кнопке, чтобы ее можно было скрыть/показать -->
+            <input id="submitButton" type="submit" value="Распознать" style="display: none;"> <!-- Скрыта по умолчанию -->
+       </p>
+    </form>
+
+    <!-- JavaScript для предпросмотра -->
+    <script>
+        function previewImage(event) {
+            var reader = new FileReader(); // Создаем объект для чтения файла
+            var imagePreview = document.getElementById('imagePreview');
+            var imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            var submitButton = document.getElementById('submitButton');
+            
+            reader.onload = function(){
+                imagePreview.src = reader.result; // Устанавливаем src для img из прочитанных данных
+                imagePreviewContainer.style.display = 'block'; // Показываем контейнер с превью
+                submitButton.style.display = 'inline-block'; // Показываем кнопку "Распознать"
+            }
+            
+            // Проверяем, что файл выбран
+            if (event.target.files && event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]); // Читаем файл как Data URL
+            } else {
+                // Если файл отменили, скрываем превью и кнопку
+                imagePreview.src = "#";
+                imagePreviewContainer.style.display = 'none';
+                submitButton.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

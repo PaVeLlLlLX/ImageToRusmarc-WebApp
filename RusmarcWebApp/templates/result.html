@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Результат Распознавания</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}"> 
+    <style>
+        /* Дополнительные стили для расположения */
+        .result-container {
+            display: flex; /* Используем flexbox */
+            flex-wrap: wrap; /* Разрешаем перенос, если не влезает */
+            gap: 30px; /* Пространство между колонками */
+            align-items: flex-start; /* Выравниваем по верху */
+            margin-top: 20px;
+        }
+        .image-column {
+            flex: 1; /* Занимает доступное пространство */
+            min-width: 500px; /* Минимальная ширина для картинки */
+            text-align: center;
+        }
+        .text-column {
+            flex: 1.5; /* Занимает больше места */
+            min-width: 500px; /* Минимальная ширина для текста */
+        }
+        .result-image {
+            max-width: 100%;
+            height: auto; /* Сохраняем пропорции */
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        /* Убираем ограничение высоты pre, т.к. теперь есть картинка */
+        pre {
+             max-height: none; 
+             overflow-y: visible;
+        }
+    </style>
+</head>
+<body>
+    <h1>Результат Распознавания</h1>
+    <p>Для файла: <i>{{ filename }}</i></p> 
+    <hr>
+
+    <div class="result-container">
+        <!-- Колонка с изображением -->
+        <div class="image-column">
+            <h2>Исходное изображение:</h2>
+            <!-- Отображаем изображение из Base64 -->
+            {% if image_base64 %}
+            <img class="result-image" src="data:image/jpeg;base64,{{ image_base64 }}" alt="Загруженное изображение">
+            {% else %}
+            <p>Не удалось отобразить изображение.</p>
+            {% endif %}
+        </div>
+
+        <!-- Колонка с текстом -->
+        <div class="text-column">
+            <h2>Предсказанный текст:</h2>
+            <pre>{{ prediction }}</pre>
+        </div>
+    </div>
+
+    <hr>
+    <p class="center-p"><a href="/" class="button-link">Загрузить другое изображение</a></p> 
+</body>
+</html>
